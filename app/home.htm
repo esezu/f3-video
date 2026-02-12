@@ -2,59 +2,26 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ @TITLE ?: 'F3+Vue3 首页' }}</title>
-    <!-- 🔥 换国内CDN，避免加载失败 -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.4.21/vue.global.prod.js"></script>
+    <title>纯PHP输出数据</title>
 </head>
 <body>
-    <!-- Vue挂载容器 -->
-    <div id="app">
-        <h1>📌 F3传递数据 + Vue3渲染</h1>
-        <div class="user-card">
-            <!-- Vue插值语法 -->
-            <p>姓名：{{ user.name }}</p>
-            <p>年龄：{{ user.age }}</p>
-            <p>性别：{{ user.sex }}</p>
-            <button @click="changeAge">年龄+1</button>
-        </div>
-    </div>
+    <h3>场景1：直接输出JSON字符串（用于展示）</h3>
+    <pre><?php echo json_encode($user, JSON_UNESCAPED_UNICODE); ?></pre>
 
-    <script>
-        // 🔥 终极修复：分步解析，加异常捕获
-        try {
-            // 1. 获取F3传递的数据（转JSON字符串，确保中文不转义）
-            const f3DataStr = '<? $data ?>';
-            // 2. 解析JSON（加异常捕获）
-            const f3Data = JSON.parse(f3DataStr || '{}');
-            console.log('F3传递的数据：', f3Data); // 控制台查看数据
+    <h3>场景2：纯PHP解析并输出数据</h3>
+    <p>姓名：<?php echo $user['name']; ?></p>
+    <p>年龄：<?php echo $user['age']; ?></p>
+    <p>性别：<?php echo $user['sex']; ?></p>
 
-            // 3. 初始化Vue3
-            const { createApp } = Vue;
-            createApp({
-                data() {
-                    return {
-                        user: f3Data // 赋值给Vue响应式数据
-                    };
-                },
-                methods: {
-                    changeAge() {
-                        this.user.age = Number(this.user.age) + 1; // 确保是数字类型
-                    }
-                }
-            }).mount('#app');
-        } catch (e) {
-            console.error('初始化失败：', e);
-            // 兜底：手动赋值测试数据
-            const { createApp } = Vue;
-            createApp({
-                data() {
-                    return {
-                        user: { name: '测试张三', age: 18, sex: '男' }
-                    };
-                }
-            }).mount('#app');
-        }
-    </script>
+    <h3>扩展：处理复杂数组（示例）</h3>
+    <ul>
+        <?php foreach ($users as $item): ?>
+            <li>
+                姓名：<?php echo $item['name']; ?> | 
+                年龄：<?php echo $item['age']; ?> | 
+                性别：<?php echo $item['sex']; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
 </body>
 </html>
