@@ -7,6 +7,11 @@ $f3->set('AUTOLOAD','app/');
 // $f3->set('UI', 'ui/');
 $f3->set('DEBUG', 3);
 
+$f3->set('apiurls', [
+'id1' => ['name'=>'小米资源','url'=>'demo.com'],
+'id2' => ['name'=>'红米资源','url'=>'demo.com']
+]);
+
 // 首页路由
 $f3->route('GET|POST /', 'Home->index');
 
@@ -28,7 +33,7 @@ $f3->route('GET /test', function($f3) {
         'p002' => ['name'=>'华为平板','price'=>2999]
     ]);
     $f3->set('currentTime', date('Y-m-d H:i:s'));
-    
+
     echo \Template::instance()->render('demo.htm');
 });
 
