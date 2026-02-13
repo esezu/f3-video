@@ -10,7 +10,6 @@ class Home extends Controller {
         ]);
         $f3->set('isActive', true);
         $f3->set('undefinedVar', null);
-        $f3->set('jsVar', 'const app="test"');
         $f3->set('fruits', ['苹果','香蕉','橙子']);
         $f3->set('userData', ['姓名'=>'张三','邮箱'=>'zhangsan@test.com']);
         $f3->set('products', [

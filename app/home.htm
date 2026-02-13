@@ -22,18 +22,6 @@
         <p>原生输出（@raw）：{{ @raw @user.name }}</p>
     </div>
 
-    <!-- 2. 表达式排除（无空格，官方写法） -->
-    <div class="demo-section">
-        <h3>2. 表达式排除</h3>
-        <p>排除JS变量：{-{ @jsVar }-}</p>
-        <p>排除代码块：
-            {~
-                这部分不解析：{{ @siteName }}
-            ~}
-        </p>
-        <pre>JS示例：<script>{-{ @jsVar }-}</script></pre>
-    </div>
-
     <!-- 3. 条件逻辑（官方标签） -->
     <div class="demo-section">
         <h3>3. 条件逻辑</h3>
