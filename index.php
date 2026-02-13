@@ -8,8 +8,8 @@ $f3->set('AUTOLOAD','app/');
 $f3->set('DEBUG', 3);
 
 $f3->set('apiurls', [
-'id1' => ['name'=>'小米资源','url'=>'demo.com'],
-'id2' => ['name'=>'红米资源','url'=>'demo.com']
+'id1' => ['name'=>'小米资源','url'=>'https://demo.com'],
+'id2' => ['name'=>'红米资源','url'=>'https://demo.com']
 ]);
 
 // 首页路由
