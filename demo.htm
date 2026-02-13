@@ -1,0 +1,15 @@
+<p>Hello, {{ @name }}!</p>
+<p>当前时间: {{ @currentTime }}</p>
+<p>基础（自动转义）：{{ @user.name }}</p>
+
+<F3:repeat group="{{ @fruits }}" value="{{ @fruit }}">
+    <li>{{ @fruit }}</li>
+</F3:repeat>
+
+<F3:repeat group="{{ @userData }}" key="{{ @k }}" value="{{ @v }}">
+    <li>{{ @k }}：{{ @v }}</li>
+</F3:repeat>
+
+<F3:repeat group="{{ @products }}" key="{{ @id }}" value="{{ @p }}" counter="{{ @idx }}">
+    <li>{{ @idx+1 }} - ID:{{ @id }} | {{ @p.name }} | ¥{{ @p.price }}</li>
+</F3:repeat>
