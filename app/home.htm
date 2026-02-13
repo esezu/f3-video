@@ -2,26 +2,108 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>纯PHP输出数据</title>
+    <title>{{ @siteName }}</title>
+    <style>
+        .demo-section { margin: 20px 0; padding: 10px; border: 1px solid #eee; }
+        h3 { margin: 0 0 10px 0; color: #333; }
+        pre { background: #f5f5f5; padding: 8px; font-size: 12px; }
+        .clearfix { clear: both; }
+    </style>
 </head>
 <body>
-    <h3>场景1：直接输出JSON字符串（用于展示）</h3>
-    <pre><?php echo json_encode($user, JSON_UNESCAPED_UNICODE); ?></pre>
+    <h1>{{ @siteName }} - 官方语法演示</h1>
 
-    <h3>场景2：纯PHP解析并输出数据</h3>
-    <p>姓名：<?php echo $user['name']; ?></p>
-    <p>年龄：<?php echo $user['age']; ?></p>
-    <p>性别：<?php echo $user['sex']; ?></p>
+    <!-- 1. 核心变量（严格官方语法） -->
+    <div class="demo-section">
+        <h3>1. 变量输出（F3 3.9 标准）</h3>
+        <p>基础（自动转义）：{{ @user.name }}</p>
+        <p>空合并（??）：{{ @undefinedVar ?? '变量未定义' }}</p>
+        <p>三元简写（?:）：{{ @undefinedVar ?: '变量未定义' }}</p>
+        <p>原生输出（@raw）：{{ @raw @user.name }}</p>
+    </div>
 
-    <h3>扩展：处理复杂数组（示例）</h3>
-    <ul>
-        <?php foreach ($users as $item): ?>
-            <li>
-                姓名：<?php echo $item['name']; ?> | 
-                年龄：<?php echo $item['age']; ?> | 
-                性别：<?php echo $item['sex']; ?>
-            </li>
-        <?php endforeach; ?>
-    </ul>
+    <!-- 2. 表达式排除（无空格，官方写法） -->
+    <div class="demo-section">
+        <h3>2. 表达式排除</h3>
+        <p>排除JS变量：{-{ @jsVar }-}</p>
+        <p>排除代码块：
+            {~
+                这部分不解析：{{ @siteName }}
+            ~}
+        </p>
+        <pre>JS示例：<script>{-{ @jsVar }-}</script></pre>
+    </div>
+
+    <!-- 3. 条件逻辑（官方标签） -->
+    <div class="demo-section">
+        <h3>3. 条件逻辑</h3>
+        <p>Check 单分支：
+            <F3:check if="{{ @isActive }}">
+                <span style="color:green;">✅ 激活</span>
+            </F3:check>
+        </p>
+        <p>Check 双分支：
+            <F3:check if="{{ @user.loggedIn }}">
+                <F3:true>✅ {{ @user.name }} 已登录</F3:true>
+                <F3:false>❌ 未登录</F3:false>
+            </F3:check>
+        </p>
+        <p>Switch：
+            <F3:switch expr="{{ @user.role }}">
+                <F3:case value="admin" break="true">🔧 管理员</F3:case>
+                <F3:case value="editor" break="true">✏️ 编辑</F3:case>
+                <F3:default>👤 普通用户</F3:default>
+            </F3:switch>
+        </p>
+    </div>
+
+    <!-- 4. 循环（官方语法，无越界） -->
+    <div class="demo-section">
+        <h3>4. 循环迭代</h3>
+        <p>Loop 计数器：
+            <ul>
+                <F3:loop from="{{ @i=0 }}" to="{{ @i < count(@fruits) }}" step="{{ @i++ }}">
+                    <li>第{{ @i+1 }}个：{{ @fruits[@i] }}</li>
+                </F3:loop>
+            </ul>
+        </p>
+        <p>Repeat 仅值：
+            <ul>
+                <F3:repeat group="{{ @fruits }}" value="{{ @fruit }}">
+                    <li>{{ @fruit }}</li>
+                </F3:repeat>
+            </ul>
+        </p>
+        <p>Repeat 键值：
+            <ul>
+                <F3:repeat group="{{ @userData }}" key="{{ @k }}" value="{{ @v }}">
+                    <li>{{ @k }}：{{ @v }}</li>
+                </F3:repeat>
+            </ul>
+        </p>
+        <p>Repeat 键+值+计数器：
+            <ul>
+                <F3:repeat group="{{ @products }}" key="{{ @id }}" value="{{ @p }}" counter="{{ @idx }}">
+                    <li>{{ @idx+1 }} - ID:{{ @id }} | {{ @p.name }} | ¥{{ @p.price }}</li>
+                </F3:repeat>
+            </ul>
+        </p>
+    </div>
+
+    <!-- 5. 模板引入（官方） -->
+    <div class="demo-section clearfix">
+        <h3>5. 模板引入</h3>
+        <p>无条件引入：<F3:include href="partials/header.htm" /></p>
+        <p>条件引入：<F3:include if="{{ @isActive }}" href="partials/sidebar.htm" /></p>
+    </div>
+
+    <!-- 6. 模板内赋值（官方） -->
+    <div class="demo-section">
+        <h3>6. 变量赋值</h3>
+        <F3:set key="greet" value="你好，{{ @user.name }}！" />
+        <p>赋值结果：{{ @greet }}</p>
+        <F3:set key="nextAge" value="{{ @user.age + 1 }}" />
+        <p>明年年龄：{{ @nextAge }}</p>
+    </div>
 </body>
 </html>
