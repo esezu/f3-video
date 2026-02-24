@@ -1,15 +1,46 @@
-<p>Hello, {{ @name }}!</p>
-<p>当前时间: {{ @currentTime }}</p>
-<p>基础（自动转义）：{{ @user.name }}</p>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 标题也加上容错，避免 siteName 未定义报错 -->
+    <title>{{ @siteName ?? '默认站点名称' }}</title>
+    <style>
+        .demo-section { margin: 20px 0; padding: 10px; border: 1px solid #eee; }
+        h3 { margin: 0 0 10px 0; color: #333; }
+        pre { background: #f5f5f5; padding: 8px; font-size: 12px; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <h1>{{ @siteName ?? '默认站点名称' }} - 数组转 JSON 输出</h1>
 
-<F3:repeat group="{{ @fruits }}" value="{{ @fruit }}">
-    <li>{{ @fruit }}</li>
+    <!-- 方式1：直接将数组转为 JSON（模板中调用 json_encode） -->
+    <div class="demo-section">
+        <h3>1. 原始数组转 JSON 字符串</h3>
+        <pre>{{ @apiurl ? json_encode(@apiurl, JSON_UNESCAPED_UNICODE) : '暂无数据' }}</pre>
+    </div>
+
+    <!-- 方式2：解码 Base64 后转 JSON和不解码（修复语法错误） -->
+    <div class="demo-section">
+        <h3>2. Base64 解码后转 JSON 和 原始Base64字符串</h3>
+        <!-- 解码后转JSON -->
+        <pre>{{ @apiurl_base64 ? json_encode(json_decode(base64_decode(@apiurl_base64), true), JSON_UNESCAPED_UNICODE) : '暂无数据' }}</pre>
+        <!-- 原始Base64字符串（补全三元运算符条件） -->
+        <pre>{{ @apiurl_base64 ? @apiurl_base64 : '暂无数据' }}</pre>
+    </div>
+
+
+<F3:repeat group="{{ @apiurl }}" key="{{ @key }}" value="{{ @val }}" counter="{{ @i }}">
+    <p>{{@i}}: {{@key}} - 名称：{{@val.name}}，链接：{{@val.url}}</p>
 </F3:repeat>
 
-<F3:repeat group="{{ @userData }}" key="{{ @k }}" value="{{ @v }}">
-    <li>{{ @k }}：{{ @v }}</li>
-</F3:repeat>
-
-<F3:repeat group="{{ @products }}" key="{{ @id }}" value="{{ @p }}" counter="{{ @idx }}">
-    <li>{{ @idx+1 }} - ID:{{ @id }} | {{ @p.name }} | ¥{{ @p.price }}</li>
-</F3:repeat>
+<F3:set count="{{ 10 }}" />
+<p>初始值：{{@count}}</p> <!-- 输出 10 -->
+<F3:set count="{{ @count + 5 }}" />
+<p>修改后：{{@count}}</p> <!-- 输出 15 -->
+    <!-- 4. 空数据提示 -->
+    <F3:if test="{{ count(@apiurl) == 0 }}">
+        <p>{{@emptyTip}}</p>
+    </F3:if>
+    
+</body>
+</html>

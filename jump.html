@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>请在浏览器打开</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f7f8fa;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            max-width: 400px;
+            width: 100%;
+            background: #fff;
+            border-radius: 20px;
+            padding: 45px 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+        .title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #222;
+        }
+        .desc {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+        .arrow-box {
+            margin: 0 auto 35px;
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+        .arrow {
+            width: 0;
+            height: 0;
+            border-left: 24px solid transparent;
+            border-right: 24px solid transparent;
+            border-top: 38px solid #ff5a5f;
+            margin: 0 auto;
+            animation: arrow 1.2s infinite ease-in-out;
+        }
+        @keyframes arrow {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .arrow-text {
+            font-size: 14px;
+            color: #ff5a5f;
+            margin-top: 10px;
+        }
+        .step {
+            text-align: left;
+            font-size: 15px;
+            color: #444;
+            margin: 14px 0;
+            padding-left: 12px;
+            border-left: 3px solid #007aff;
+        }
+        .btn-group {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #007aff;
+            color: #fff;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,122,255,0.2);
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        .btn-douyin { background: #000; }
+        .btn-xhs { background: #fe2c55; }
+        .btn-weibo { background: #e6162d; }
+        .btn-default { background: #007aff; }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #999;
+        }
+        .system-tip {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #ff5a5f;
+            padding: 8px;
+            background: #fff0f0;
+            border-radius: 8px;
+        }
+        .app-tip {
+            font-size: 14px;
+            color: #007aff;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #e8f4ff;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="title">请在浏览器打开</div>
+        <div id="appTip" class="app-tip"></div>
+        <div class="desc">为保证正常访问，请点击下方按钮在浏览器中打开</div>
+
+        <div class="arrow-box" id="arrowBox" style="display: none;">
+            <div class="arrow"></div>
+            <div class="arrow-text">右上角 ···</div>
+        </div>
+
+        <div id="stepTips" style="display: none;">
+            <div class="step">1. 点击右上角菜单</div>
+            <div class="step">2. 选择在浏览器打开</div>
+            <div class="step">3. 即可访问对应链接</div>
+        </div>
+
+        <div id="systemTip" class="system-tip" style="display: none;"></div>
+
+        <div class="btn-group">
+            <a class="btn btn-default" href="javascript:jumpToUrl('default')">官网链接</a>
+            <a class="btn btn-douyin" href="javascript:jumpToUrl('douyin')">抖音相关链接</a>
+            <a class="btn btn-xhs" href="javascript:jumpToUrl('xhs')">小红书相关链接</a>
+            <a class="btn btn-weibo" href="javascript:jumpToUrl('weibo')">微博相关链接</a>
+        </div>
+
+        <div class="footer">安全跳转 · 多端适配</div>
+    </div>
+
+    <script>
+        // ========== 配置区（修改这里的链接） ==========
+        // 安卓端浏览器跳转链接
+        const androidLinks = {
+            default: "https://www.baidu.com",    // 官网安卓链接
+            douyin: "https://www.douyin.com",    // 抖音网页版安卓链接
+            xhs: "https://www.xiaohongshu.com",  // 小红书网页版安卓链接
+            weibo: "https://weibo.com"           // 微博网页版安卓链接
+        };
+        // iOS端浏览器跳转链接
+        const iosLinks = {
+            default: "https://www.baidu.com",    // 官网iOS链接
+            douyin: "https://www.douyin.com",    // 抖音网页版iOS链接
+            xhs: "https://www.xiaohongshu.com",  // 小红书网页版iOS链接
+            weibo: "https://weibo.com"           // 微博网页版iOS链接
+        };
+        // ========== 核心识别逻辑 ==========
+        // 判断当前所处的App内置浏览器
+        function getCurrentApp() {
+            const ua = navigator.userAgent.toLowerCase();
+            if (/micromessenger/i.test(ua)) return "wechat";    // 微信
+            if (/douyin/i.test(ua)) return "douyin";            // 抖音
+            if (/xiaohongshu|xhs/i.test(ua)) return "xhs";      // 小红书
+            if (/weibo|sinaweibo/i.test(ua)) return "weibo";    // 微博
+            if (/qq/i.test(ua)) return "qq";                    // QQ
+            return "browser";                                   // 普通浏览器
+        }
+        // 判断系统类型（iOS/Android）
+        function getOS() {
+            const ua = navigator.userAgent.toLowerCase();
+            if (/iphone|ipad|ipod/i.test(ua)) return "ios";
+            if (/android/i.test(ua)) return "android";
+            return "other";
+        }
+        // 显示环境提示
+        function showAppTip() {
+            const app = getCurrentApp();
+            const appTipEl = document.getElementById("appTip");
+            const arrowBox = document.getElementById("arrowBox");
+            const stepTips = document.getElementById("stepTips");
+            
+            const appNameMap = {
+                wechat: "微信",
+                douyin: "抖音",
+                xhs: "小红书",
+                weibo: "微博",
+                qq: "QQ",
+                browser: "普通浏览器"
+            };
+            
+            appTipEl.textContent = `当前环境：${appNameMap[app]}，点击按钮将跳转默认浏览器`;
+            
+            // 微信/QQ内显示引导箭头和步骤
+            if (app === "wechat" || app === "qq") {
+                arrowBox.style.display = "block";
+                stepTips.style.display = "block";
+            }
+        }
+        // 显示系统提示
+        function showSystemTip(text) {
+            const tipEl = document.getElementById("systemTip");
+            tipEl.textContent = text;
+            tipEl.style.display = "block";
+            setTimeout(() => {
+                tipEl.style.display = "none";
+            }, 3000);
+        }
+        // 核心跳转逻辑：跳转到浏览器打开指定链接
+        function jumpToUrl(type) {
+            const currentApp = getCurrentApp();
+            const os = getOS();
+            
+            // 微信/QQ内：提示先跳浏览器
+            if (currentApp === "wechat" || currentApp === "qq") {
+                showSystemTip("请先点击右上角「在浏览器打开」后再操作！");
+                return;
+            }
+            
+            // 非微信/QQ：直接跳转到对应系统的链接（默认浏览器打开）
+            let targetUrl = "";
+            if (os === "ios") {
+                targetUrl = iosLinks[type] || iosLinks.default;
+                showSystemTip("iOS设备：正在跳转到默认浏览器打开链接...");
+            } else if (os === "android") {
+                targetUrl = androidLinks[type] || androidLinks.default;
+                showSystemTip("安卓设备：正在跳转到默认浏览器打开链接...");
+            } else {
+                targetUrl = androidLinks.default;
+                showSystemTip("电脑端：正在打开链接...");
+            }
+            
+            // 强制在浏览器中打开（通过新建窗口/跳转实现）
+            window.location.href = targetUrl;
+        }
+        // 页面加载完成初始化
+        window.onload = function() {
+            showAppTip();
+            // 普通浏览器下直接提示可跳转
+            if (getCurrentApp() === "browser") {
+                showSystemTip("当前为普通浏览器，可直接点击按钮跳转");
+            }
+        }
+    </script>
+</body>
+</html>
